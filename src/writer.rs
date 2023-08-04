@@ -10,8 +10,11 @@ pub(crate) struct Writer (
 impl Writer {
     pub(crate) fn new<P: AsRef<Path>>(outfile: P) -> Result<Self> {
         let inner: Box<dyn WriteEv> = match format_from_filename(&outfile)? {
+            #[cfg(feature = "lhef")]
             Format::Lhef => Box::new(crate::lhef::Writer::new(outfile)?),
+            #[cfg(feature = "hepmc2")]
             Format::HepMC2 => Box::new(crate::hepmc2::Writer::new(outfile)?),
+            #[cfg(feature = "ntuple")]
             Format::NTuple => Box::new(crate::ntuple::Writer::new(outfile)?),
         };
         Ok(Self(inner))
