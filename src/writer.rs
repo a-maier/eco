@@ -1,0 +1,62 @@
+use std::path::Path;
+
+use anyhow::{Result, bail};
+use avery::Event;
+
+pub(crate) struct Writer (
+    Box<dyn WriteEv>
+);
+
+impl Writer {
+    pub(crate) fn new<P: AsRef<Path>>(outfile: P) -> Result<Self> {
+        let inner: Box<dyn WriteEv> = match format_from_filename(&outfile)? {
+            Format::Lhef => Box::new(crate::lhef::Writer::new(outfile)?),
+            Format::HepMC2 => Box::new(crate::hepmc2::Writer::new(outfile)?),
+            Format::NTuple => Box::new(crate::ntuple::Writer::new(outfile)?),
+        };
+        Ok(Self(inner))
+    }
+}
+
+pub(crate) trait WriteEv {
+    fn write(&mut self, event: Event) -> Result<()>;
+}
+
+impl WriteEv for Writer {
+    fn write(&mut self, event: Event) -> Result<()> {
+        self.0.write(event)
+    }
+}
+
+fn format_from_filename<P: AsRef<Path>>(file: P) -> Result<Format> {
+    let path = file.as_ref();
+    let Some(suffix) = path.extension() else {
+        bail!("No extension found in path {path:?}")
+    };
+    let Some(suffix) = suffix.to_str() else {
+        bail!("Unknown file extension {suffix:?}")
+    };
+    use Format::*;
+    let fmt = match suffix {
+        #[cfg(feature = "hepmc2")]
+        "hepmc" | "hepmc2" => HepMC2,
+        #[cfg(feature = "lhef")]
+        "lhe" | "lhef" => Lhef,
+        #[cfg(feature = "ntuple")]
+        "root" => NTuple,
+        _ => bail!("Unknown file extension {suffix:?}")
+    };
+    Ok(fmt)
+}
+
+    // let outformat = format_from_filename(&outfile).context(
+    //     "Failed to determine output format"
+    // )?;
+enum Format {
+    #[cfg(feature = "lhef")]
+    Lhef,
+    #[cfg(feature = "hepmc2")]
+    HepMC2,
+    #[cfg(feature = "ntuple")]
+    NTuple,
+}
