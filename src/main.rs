@@ -15,11 +15,21 @@ use clap::Parser;
 use crate::{writer::{WriteEv, Writer}, reader::Reader};
 
 #[derive(Debug, Parser)]
-#[clap(version)]
+#[clap(version, about = "Convert events between different formats")]
 struct Opt {
-    pub(crate) infile: PathBuf,
+    /// Skip the first <SKIP> events
+    #[clap(short, long)]
+    skip: Option<usize>,
 
-    pub(crate) outfile: PathBuf,
+    /// Only convert the first <NUM> events
+    #[clap(short, long)]
+    num: Option<usize>,
+
+    /// Input event file
+    infile: PathBuf,
+
+    /// Output event file
+    outfile: PathBuf,
 }
 
 fn main() -> Result<()> {
@@ -32,7 +42,10 @@ fn main() -> Result<()> {
         || format!("Failed to creat writer to {:?}", opt.outfile)
     )?;
 
-    for event in reader {
+    let skip = opt.skip.unwrap_or(0);
+    let num = opt.num.unwrap_or(usize::MAX);
+
+    for event in reader.skip(skip).take(num) {
         writer.write(event?)?;
     }
     // TODO:
