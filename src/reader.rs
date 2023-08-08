@@ -1,4 +1,4 @@
-use std::{io::BufReader, fs::File};
+use std::{io::BufReader, fs::File, path::Path};
 
 use anyhow::{anyhow, Result};
 use audec::auto_decompress;
@@ -9,8 +9,8 @@ pub(crate) struct Reader (
 );
 
 impl Reader {
-    pub(crate) fn new(infile: &str) -> Result<Self> {
-        let file = File::open(infile)?;
+    pub(crate) fn new<P: AsRef<Path>>(infile: P) -> Result<Self> {
+        let file = File::open(infile.as_ref())?;
         let mut input = auto_decompress(BufReader::new(file));
         let buf = input.fill_buf()?;
         #[cfg(feature = "ntuple")]

@@ -7,26 +7,29 @@ mod hepmc2;
 #[cfg(feature = "ntuple")]
 mod ntuple;
 
-use anyhow::{Result, bail, Context};
+use std::path::PathBuf;
+
+use anyhow::{Result, Context};
+use clap::Parser;
 
 use crate::{writer::{WriteEv, Writer}, reader::Reader};
 
-const USAGE: &str = "eco INFILE OUTFILE";
+#[derive(Debug, Parser)]
+#[clap(version)]
+struct Opt {
+    pub(crate) infile: PathBuf,
+
+    pub(crate) outfile: PathBuf,
+}
 
 fn main() -> Result<()> {
-    let mut args = std::env::args().skip(1);
-    let Some(infile) = args.next() else {
-        bail!("INFILE argument missing: \nUsage: {USAGE}")
-    };
-    let Some(outfile) = args.next() else {
-        bail!("OUTFILE argument missing: \nUsage: {USAGE}")
-    };
+    let opt = Opt::parse();
 
-    let reader = Reader::new(&infile).with_context(
-        || format!("Failed to read from {infile}")
+    let reader = Reader::new(&opt.infile).with_context(
+        || format!("Failed to read from {:?}", opt.infile)
     )?;
-    let mut writer = Writer::new(&outfile).with_context(
-        || format!("Failed to creat writer to {outfile}")
+    let mut writer = Writer::new(&opt.outfile).with_context(
+        || format!("Failed to creat writer to {:?}", opt.outfile)
     )?;
 
     for event in reader {
