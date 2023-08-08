@@ -6,11 +6,13 @@ mod lhef;
 mod hepmc2;
 #[cfg(feature = "ntuple")]
 mod ntuple;
+mod format;
 
 use std::path::PathBuf;
 
 use anyhow::{Result, Context};
 use clap::Parser;
+use format::Format;
 
 use crate::{writer::{WriteEv, Writer}, reader::Reader};
 
@@ -25,6 +27,13 @@ struct Opt {
     #[clap(short, long)]
     num: Option<usize>,
 
+    /// Output format
+    ///
+    /// If this option is not set, the format will be determined from
+    /// the filename extension of the output file.
+    #[clap(short, long, verbatim_doc_comment)]
+    format: Option<Format>,
+
     /// Input event file
     infile: PathBuf,
 
@@ -38,7 +47,7 @@ fn main() -> Result<()> {
     let reader = Reader::new(&opt.infile).with_context(
         || format!("Failed to read from {:?}", opt.infile)
     )?;
-    let mut writer = Writer::new(&opt.outfile).with_context(
+    let mut writer = Writer::new(&opt.outfile, opt.format).with_context(
         || format!("Failed to creat writer to {:?}", opt.outfile)
     )?;
 

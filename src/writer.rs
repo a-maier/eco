@@ -3,13 +3,23 @@ use std::path::Path;
 use anyhow::{Result, bail};
 use avery::Event;
 
+use crate::format::Format;
+
 pub(crate) struct Writer (
     Box<dyn WriteEv>
 );
 
 impl Writer {
-    pub(crate) fn new<P: AsRef<Path>>(outfile: P) -> Result<Self> {
-        let inner: Box<dyn WriteEv> = match format_from_filename(&outfile)? {
+    pub(crate) fn new<P: AsRef<Path>>(
+        outfile: P,
+        format: Option<Format>,
+    ) -> Result<Self> {
+        let format = if let Some(format) = format {
+            format
+        } else {
+            format_from_filename(&outfile)?
+        };
+        let inner: Box<dyn WriteEv> = match format {
             #[cfg(feature = "lhef")]
             Format::Lhef => Box::new(crate::lhef::Writer::new(outfile)?),
             #[cfg(feature = "hepmc2")]
@@ -50,16 +60,4 @@ fn format_from_filename<P: AsRef<Path>>(file: P) -> Result<Format> {
         _ => bail!("Unknown file extension {suffix:?}")
     };
     Ok(fmt)
-}
-
-    // let outformat = format_from_filename(&outfile).context(
-    //     "Failed to determine output format"
-    // )?;
-enum Format {
-    #[cfg(feature = "lhef")]
-    Lhef,
-    #[cfg(feature = "hepmc2")]
-    HepMC2,
-    #[cfg(feature = "ntuple")]
-    NTuple,
 }
