@@ -32,7 +32,7 @@ pub(crate) struct Writer (
 );
 impl Writer {
     pub(crate) fn new<P: AsRef<std::path::Path>>(outfile: P) -> Result<Self> {
-        let file = File::open(outfile)?;
+        let file = File::create(outfile)?;
         let writer = hepmc2::Writer::new(BufWriter::new(file))?;
         Ok(Self(writer))
     }

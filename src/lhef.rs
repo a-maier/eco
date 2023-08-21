@@ -35,7 +35,7 @@ pub(crate) struct Writer (
 );
 impl Writer {
     pub(crate) fn new<P: AsRef<std::path::Path>>(outfile: P) -> Result<Self> {
-        let file = File::open(outfile)?;
+        let file = File::create(outfile)?;
         let writer = lhef::Writer::new(BufWriter::new(file), "1.0")?;
         Ok(Self(writer))
     }
