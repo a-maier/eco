@@ -1,34 +1,10 @@
-use std::{io::{BufRead, BufWriter}, fs::File};
+use std::{io::BufWriter, fs::File};
 
 use anyhow::Result;
 use avery::Event;
 use lhef::HEPRUP;
 
 use crate::writer::WriteEv;
-
-pub(crate) struct Reader<T> (
-    lhef::Reader<T>
-);
-
-impl<T: BufRead> Reader<T> {
-    pub(crate) fn new(input: T) -> Result<Self> {
-        let reader = lhef::Reader::new(input)?;
-        Ok(Self(reader))
-    }
-}
-
-impl<T: BufRead> Iterator for Reader<T> {
-    type Item = Result<Event>;
-
-    fn next(&mut self) -> Option<Self::Item> {
-        let ev = self.0.hepeup();
-        match ev {
-            Ok(Some(ev)) => Some(Ok((self.0.heprup().to_owned(), ev).into())),
-            Ok(None) => None,
-            Err(err) => Some(Err(err.into())),
-        }
-    }
-}
 
 pub(crate) struct Writer (
     lhef::Writer<BufWriter<File>>

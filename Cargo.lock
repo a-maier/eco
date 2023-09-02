@@ -265,9 +265,9 @@ name = "eco"
 version = "0.2.1"
 dependencies = [
  "anyhow",
- "audec",
  "avery",
  "clap",
+ "event-file-reader",
  "hepmc2",
  "lhef",
  "ntuple",
@@ -304,6 +304,21 @@ checksum = "aa68f1b12764fab894d2755d2518754e71b4fd80ecfb822714a1206c2aab39bf"
 dependencies = [
  "cc",
  "libc",
+]
+
+[[package]]
+name = "event-file-reader"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f448b6c1031cb1d918cb0721fb9b1fcc54076daeb3d3c9f2d09095479ff43924"
+dependencies = [
+ "anyhow",
+ "audec",
+ "avery",
+ "hepmc2",
+ "lhef",
+ "ntuple",
+ "thiserror",
 ]
 
 [[package]]

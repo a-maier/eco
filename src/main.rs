@@ -1,4 +1,3 @@
-mod reader;
 mod writer;
 #[cfg(feature = "lhef")]
 mod lhef;
@@ -12,9 +11,10 @@ use std::path::PathBuf;
 
 use anyhow::{Result, Context};
 use clap::Parser;
+use event_file_reader::EventFileReader as Reader;
 use format::Format;
 
-use crate::{writer::{WriteEv, Writer}, reader::Reader};
+use crate::writer::{WriteEv, Writer};
 
 #[derive(Debug, Parser)]
 #[clap(version, about = "Convert events between different formats")]

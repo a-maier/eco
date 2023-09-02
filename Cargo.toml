@@ -11,9 +11,9 @@ repository = "https://github.com/a-maier/eco"
 
 [dependencies]
 anyhow = "1.0"
-audec = { version = "0.1", default-features = false }
 avery = { version = "0.4", default-features = false }
 clap = { version = "4.3", features = ["derive"] }
+event-file-reader = { version = "0.1.0", default-features = false }
 hepmc2 = { version = "0.5", optional = true }
 lhef = { version = "0.6", optional = true }
 ntuple = { version = "0.7", optional = true }
@@ -23,12 +23,12 @@ ntuple = { version = "0.7", optional = true }
 
 [features]
 default = ["hepmc2", "flate2", "lhef", "zstd"]
-hepmc2 = ["dep:hepmc2", "avery/hepmc2"]
-lhef = ["dep:lhef", "avery/lhef"]
-ntuple = ["dep:ntuple", "avery/ntuple"]
-bzip2 = ["audec/bzip2"]
-lz4 = ["audec/lz4"]
-lz4_flex = ["audec/lz4_flex"]
-flate2 = ["audec/flate2"]
-zstd = ["audec/zstd"]
+hepmc2 = ["dep:hepmc2", "avery/hepmc2", "event-file-reader/hepmc2"]
+lhef = ["dep:lhef", "avery/lhef", "event-file-reader/lhef"]
+ntuple = ["dep:ntuple", "avery/ntuple", "event-file-reader/ntuple"]
+bzip2 = ["event-file-reader/bzip2"]
+lz4 = ["event-file-reader/lz4"]
+lz4_flex = ["event-file-reader/lz4_flex"]
+flate2 = ["event-file-reader/flate2"]
+zstd = ["event-file-reader/zstd"]
 all = ["bzip2", "lz4_flex", "ntuple"]
