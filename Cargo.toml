@@ -19,7 +19,7 @@ lhef = { version = "0.6", optional = true }
 ntuple = { version = "0.7", optional = true }
 
 [build-dependencies]
-ntuple = { version = "0.7", optional = true }
+anyhow = "1.0"
 
 [features]
 default = ["hepmc2", "flate2", "lhef", "zstd"]
