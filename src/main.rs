@@ -1,15 +1,15 @@
-mod writer;
-#[cfg(feature = "lhef")]
-mod lhef;
+mod format;
 #[cfg(feature = "hepmc2")]
 mod hepmc2;
+#[cfg(feature = "lhef")]
+mod lhef;
 #[cfg(feature = "ntuple")]
 mod ntuple;
-mod format;
+mod writer;
 
 use std::path::PathBuf;
 
-use anyhow::{Result, Context};
+use anyhow::{Context, Result};
 use clap::Parser;
 use event_file_reader::EventFileReader as Reader;
 use format::Format;
@@ -44,12 +44,12 @@ struct Opt {
 fn main() -> Result<()> {
     let opt = Opt::parse();
 
-    let reader = Reader::new(&opt.infile).with_context(
-        || format!("Failed to read from {:?}", opt.infile)
-    )?;
-    let mut writer = Writer::new(&opt.outfile, opt.format).with_context(
-        || format!("Failed to creat writer to {:?}", opt.outfile)
-    )?;
+    let reader = Reader::new(&opt.infile)
+        .with_context(|| format!("Failed to read from {:?}", opt.infile))?;
+    let mut writer =
+        Writer::new(&opt.outfile, opt.format).with_context(|| {
+            format!("Failed to creat writer to {:?}", opt.outfile)
+        })?;
 
     let skip = opt.skip.unwrap_or(0);
     let num = opt.num.unwrap_or(usize::MAX);

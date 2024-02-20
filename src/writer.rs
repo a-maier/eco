@@ -1,13 +1,11 @@
 use std::path::Path;
 
-use anyhow::{Result, bail};
+use anyhow::{bail, Result};
 use avery::Event;
 
 use crate::format::Format;
 
-pub(crate) struct Writer (
-    Box<dyn WriteEv>
-);
+pub(crate) struct Writer(Box<dyn WriteEv>);
 
 impl Writer {
     pub(crate) fn new<P: AsRef<Path>>(
@@ -57,7 +55,7 @@ fn format_from_filename<P: AsRef<Path>>(file: P) -> Result<Format> {
         "lhe" | "lhef" => Lhef,
         #[cfg(feature = "ntuple")]
         "root" => NTuple,
-        _ => bail!("Unknown file extension {suffix:?}")
+        _ => bail!("Unknown file extension {suffix:?}"),
     };
     Ok(fmt)
 }

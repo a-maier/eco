@@ -1,6 +1,8 @@
 use clap::ValueEnum;
 
-#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ValueEnum)]
+#[derive(
+    Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ValueEnum,
+)]
 #[clap(rename_all = "lower")]
 pub(crate) enum Format {
     #[cfg(feature = "lhef")]

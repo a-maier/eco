@@ -1,13 +1,11 @@
-use std::{io::BufWriter, fs::File};
+use std::{fs::File, io::BufWriter};
 
 use anyhow::Result;
 use avery::Event;
 
 use crate::writer::WriteEv;
 
-pub(crate) struct Writer (
-    hepmc2::Writer<BufWriter<File>>
-);
+pub(crate) struct Writer(hepmc2::Writer<BufWriter<File>>);
 impl Writer {
     pub(crate) fn new<P: AsRef<std::path::Path>>(outfile: P) -> Result<Self> {
         let file = File::create(outfile)?;
